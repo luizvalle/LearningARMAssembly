@@ -9,28 +9,29 @@ message2: .asciz "%d! = %d\n"
 .balign 4
 scan_pattern: .asciz "%d"
 
-.balign 4
-number: .word 0
-
 .text
 
 .global main
 main:
-    str lr, [sp, #-8]!
+    str lr, [sp, #-4]!
+    sub sp, sp, #4
 
     ldr r0, addr_of_message1
     bl printf
 
     ldr r0, addr_of_scan_pattern
-    ldr r1, addr_of_number
+    mov r1, sp
     bl scanf
 
-    ldr r0, [r1]
+    ldr r0, [sp]
     bl factorial
 
-    str r0, [sp, #-8]!
+    mov r2, r0
+    ldr r0, addr_of_message2
+    ldr r1, [sp], #4
+    bl printf
 
-    ldr lr, [sp], #8
+    ldr lr, [sp], #4
     bx lr
 
 factorial:
@@ -42,7 +43,7 @@ factorial:
     bl factorial
     ldr r1, [sp], #8
     mul r0, r1, r0
-    bl end_factorial
+    b end_factorial
 base_case:
     mov r0, #1
 end_factorial:
@@ -52,7 +53,6 @@ end_factorial:
 addr_of_message1: .word message1
 addr_of_message2: .word message2
 addr_of_scan_pattern: .word scan_pattern
-addr_of_number: .word number
 
 .global printf
 .global scanf
