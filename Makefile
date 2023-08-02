@@ -1,4 +1,4 @@
-all: first sum01 load01 store01 compare01 loop01 collatz array01 array02 array03 hello01 printf01 factorial01 factorial02
+all: first sum01 load01 store01 compare01 loop01 collatz array01 array02 array03 hello01 printf01 factorial01 factorial02 collatz02
 
 first: first.o
 	gcc $+ -o $@
@@ -84,5 +84,11 @@ factorial02: factorial02.o
 factorial02.o: factorial02.s
 	as $< -o $@
 
+collatz02: collatz02.o
+	gcc $+ -o $@ -march=armv6
+
+collatz02.o: collatz02.s
+	as $< -o $@
+
 clean:
-	rm -vf *.o first sum01 load01 store01 compare01 loop01 collatz array01 array02 array03 hello01 printf01 factorial01 factorial02
+	rm -vf *.o first sum01 load01 store01 compare01 loop01 collatz array01 array02 array03 hello01 printf01 factorial01 factorial02 collatz02
