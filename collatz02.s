@@ -1,31 +1,33 @@
 .data
 
-message: .asciz "Type a number: "
+message1: .asciz "Please, type a number: "
 scan_pattern: .asciz "%d"
-message2: .asciz "Length of the Hailstone sequence for %d is %d\n"
+message2: .asciz "The collatz sequence of %d has length %d.\n"
 
 .text
 
 .global main
 main:
-    str lr, [sp, #4]!
+    str lr, [sp, #-4]!
+    sub sp, sp, #4
 
-    ldr r0, addr_of_message
+    ldr r0, addr_of_message1
     bl printf
 
     ldr r0, addr_of_scan_pattern
-    sub sp, sp, #4
     mov r1, sp
+    bl scanf
 
     ldr r0, [sp]
     bl collatz
 
     mov r2, r0
+    ldr r1, [sp]
     ldr r0, addr_of_message2
-    ldr r1, [sp], #-4
     bl printf
 
-    ldr lr, [sp], #-4
+    add sp, sp, #4
+    ldr lr, [sp], #4
     bx lr
 
 collatz:
@@ -36,14 +38,11 @@ collatz_loop:
     beq collatz_end
     and r2, r1, #1
     cmp r2, #0
-    beq collatz_even
-collatz_odd:
-    add r1, r1, r1, LSL #1
-    add r1, r1, #1
-    b collatz_end_loop
 collatz_even:
-    mov r1, r1, ASR #1
-    b collatz_loop
+    moveq r1, r1, ASR #1
+collatz_odd:
+    addne r1, r1, r1, LSL #1
+    addne r1, r1, #1
 collatz_end_loop:
     add r0, r0, #1
     b collatz_loop
@@ -53,6 +52,6 @@ collatz_end:
 .global printf
 .global scanf
 
-addr_of_message: .word message
-addr_of_message2: .word message2
+addr_of_message1: .word message1
 addr_of_scan_pattern: .word scan_pattern
+addr_of_message2: .word message2
