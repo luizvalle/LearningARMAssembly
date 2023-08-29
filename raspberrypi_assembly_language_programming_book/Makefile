@@ -4,19 +4,14 @@ else
 DEBUGFLAGS =
 endif
 
+SOURCE_FILES = $(wildcard *.s)
+OBJS = $(SOURCE_FILES:%.s=%.o)
+EXECUTABLES = $(SOURCE_FILES:%.s=%.out)
+
 .PHONY: all
-all: HelloWorld movexampls add add64
+all: $(EXECUTABLES)
 
-HelloWorld: HelloWorld.o
-	ld $< -o $@
-
-movexampls: movexampls.o
-	ld $< -o $@
-
-add: add.o
-	ld $< -o $@
-
-add64: add64.o
+%.out: %.o
 	ld $< -o $@
 
 %.o: %.s
@@ -24,4 +19,6 @@ add64: add64.o
 
 .PHONY: clean
 clean:
-	rm -rf *.o HelloWorld movexampls add add64
+	rm -rf *.o $(EXECUTABLES)
+
+.SECONDARY: $(OBJS)
