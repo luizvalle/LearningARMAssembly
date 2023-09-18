@@ -15,17 +15,22 @@ _start:
 loop:
     // Read input file
     readFile r8, in_buffer, BUFFER_SIZE
-    movs r10, r0 //  Save num bytes read
+    movs r10, r0 // Save num bytes read and set flags
     beq end_loop // Read 0 bytes
 
-    // Null-terminate input
+    // Null-terminate input for to_upper
     mov r6, #0
     ldr r5, =in_buffer
     strb r6, [r5, r10]
 
+    // Call to_upper to capitalize
+    ldr r0, =in_buffer
+    ldr r1, =out_buffer
+    bl to_upper
+
     // Write to stdout to test
     mov r0, #1
-    writeFile r0, in_buffer, r10
+    writeFile r0, out_buffer, r10
     b loop
 
 end_loop:
