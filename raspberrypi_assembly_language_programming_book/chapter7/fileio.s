@@ -16,18 +16,18 @@
 .endm
 .macro readFile fd, buffer, length
     mov r0, \fd
-    mov r1, =\buffer
+    ldr r1, =\buffer
     mov r2, #\length
     mov r7, #sys_read
     svc 0
 .endm
 .macro writeFile fd, buffer, length
     mov r0, \fd
-    mov r1, =\buffer
-    mov r2, #\length
+    ldr r1, =\buffer
+    mov r2, \length
     mov r7, #sys_write
     svc 0
-.end
+.endm
 .macro flushClose fd
 // fsync call
     mov r0, \fd
