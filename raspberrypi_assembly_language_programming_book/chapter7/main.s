@@ -28,12 +28,15 @@ loop:
     ldr r1, =out_buffer
     bl to_upper
 
-    // Write to stdout to test
-    mov r0, #1
-    writeFile r0, out_buffer, r10
+    // Write to output file
+    writeFile r9, out_buffer, r10
     b loop
 
 end_loop:
+    // Close files
+    flushClose r8
+    flushClose r9
+
     // Exit
     mov r7, #1
     mov r0, #0
