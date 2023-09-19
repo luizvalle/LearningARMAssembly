@@ -1,13 +1,29 @@
+// Usage: ./to_upper <input_file> [output_file]
 .include "fileio.s"
 
 .equ BUFFER_SIZE, 250
 
 .global _start
 _start:
+    ldr r0, [sp] // Read argc
+    cmp r0, #3
+    bgt wrong_num_args
+    cmp r0, #2
+    blt wrong_num_args
+    b open_input_file
+
+wrong_num_args:
+    mov r0, #1
+    ldr r2, =num_arg_err_size
+    ldr r2, [r2]
+    writeFile r0, num_arg_err, r2
+
+open_input_file:
     // Open input file
-    openFile in_file, O_RDONLY
+    ldr r0, [sp, #8] // Get first argument (second element in argv)
+    openFile r0, O_RDONLY
     movs r8, r0 // Save file descriptor and set flags
-    bpl success // Function did not return an error code (non-negative)
+    bpl parse_output_file // Function did not return an error code (non-negative)
 
     // If we reach this, then an error was returned
     mov r0, #1 // stdout
@@ -17,9 +33,18 @@ _start:
     flushClose r8
     b exit
 
-success:
+parse_output_file:
+    ldr r0, [sp] // Read argc
+    cmp r0, #3
+    beq open_output_file
+    // Two args: No output file provided
+    mov r9, #1 // Default to stdout
+    b loop
+
+open_output_file:
+    ldr r0, [sp, #12] // Read second argument (third element in argv)
     // Open output file
-    openFile out_file, O_CREAT+O_WRONLY
+    openFile r0, O_CREAT+O_WRONLY
     mov r9, r0 // Save file descriptor
     bpl loop
 
@@ -62,12 +87,13 @@ exit:
 
 .data
 
-in_file: .asciz "main.s"
-out_file: .asciz "output.txt"
 in_buffer: .fill BUFFER_SIZE + 1, 1, 0
 out_buffer: .fill BUFFER_SIZE + 1, 1, 0
 in_err: .asciz "Error opening the input file.\n"
 // . is a special GNU variable representing the current address the assembler is on
 in_err_size: .word .-in_err 
-out_err: .asciz "Error opening the ouput file.\n"
+out_err: .asciz "Error opening the output file.\n"
 out_err_size: .word .-out_err
+num_arg_err: .asciz "Usage: ./to_upper <input_file> [output_file]"
+num_arg_err_size: .word .-num_arg_err
+

@@ -8,7 +8,7 @@
 .equ S_RDWR, 0666
 
 .macro openFile fileName, flags
-    ldr r0, =\fileName
+    mov r0, \fileName
     mov r1, #\flags
     mov r2, #S_RDWR // RW access
     mov r7, #sys_open
