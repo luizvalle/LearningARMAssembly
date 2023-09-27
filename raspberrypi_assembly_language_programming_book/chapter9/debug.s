@@ -1,12 +1,12 @@
 .macro printReg reg
-    push {r0-r4, lr}
-    mov r2, r\reg
-    mov r3, r\reg
-    mov r1, #\reg
-    add r1, #'0'
-    ldr r0, =ptfStr
-    bl printf
-    pop {r0-r4, lr}
+  push {r0-r4, lr}
+  mov r2, r\reg
+  mov r3, r\reg
+  mov r1, #\reg
+  add r1, #'0'
+  ldr r0, =ptfStr
+  bl printf
+  pop {r0-r4, lr}
 .endm
 .macro printStr str
   push {r0-r4, lr}
