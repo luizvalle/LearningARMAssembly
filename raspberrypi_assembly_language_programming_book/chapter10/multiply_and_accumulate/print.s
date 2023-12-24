@@ -29,7 +29,7 @@ end_row:
 exit:
   pop {r4-r12, lr}
   bx lr
- 
+
 .data
 format_str: .asciz "\t%3d"
 new_line: .asciz "\n"
