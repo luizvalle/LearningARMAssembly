@@ -8,6 +8,30 @@
 .global matrix_multiply
 matrix_multiply:
     push {r4-r12, lr}
+    mov r4, r0
+    mov r5, r1
+    mov r6, r2
+    mov r8, r3
+    mov r9, r3
+row_A_loop:
+    subs r8, r8, #1
+    blt exit_mm
+    mov r10, r9
+    mov r11, r5
+row_B_loop:
+    subs r10, r10, #1
+    blt end_row_A
+    mov r0, r4
+    mov r1, r11
+    mov r2, r9
+    bl dot_product
+    str r1, [r6], #4
+    add r11, r11, r9, LSL #2
+    b row_B_loop
+end_row_A:
+    add r4, r4, r9, LSL #2
+    b row_A_loop
+exit_mm:
     pop {r4-r12, lr}
     bx lr
 
