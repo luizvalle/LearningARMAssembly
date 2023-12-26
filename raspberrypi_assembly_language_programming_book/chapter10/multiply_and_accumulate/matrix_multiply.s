@@ -8,11 +8,16 @@
 .global matrix_multiply
 matrix_multiply:
     push {r4-r12, lr}
+    // Save parameters
     mov r4, r0
     mov r5, r1
     mov r6, r2
     mov r8, r3
     mov r9, r3
+    // Transpose matrix B
+    mov r0, r5
+    mov r1, r9
+    bl transpose
 row_A_loop:
     subs r8, r8, #1
     blt exit_mm
@@ -32,6 +37,10 @@ end_row_A:
     add r4, r4, r9, LSL #2
     b row_A_loop
 exit_mm:
+    // Transpose matrix B back
+    mov r0, r5
+    mov r1, r9
+    bl transpose
     pop {r4-r12, lr}
     bx lr
 
@@ -57,5 +66,34 @@ loop:
 exit_dp:
     mov r0, r5
     mov r1, r4
+    pop {r4-r12, lr}
+    bx lr
+
+// Transposes a square matrix in-place
+// Parameters
+//  r0: The address to the first element of the matrix to be transposed
+//  r1: The number of rows in the matrix
+transpose:
+    push {r4-r12, lr}
+    mov r4, r1 // i index
+i_loop:
+    subs r4, r4, #1
+    blt exit_t
+    mov r5, r4 // j index
+    add r5, r5, #1
+j_loop:
+    subs r5, r5, #1
+    blt i_loop
+    mul r6, r4, r1
+    add r6, r6, r5
+    ldr r8, [r0, r6, LSL #2] // r8 = M[i, j]
+    mul r9, r5, r1
+    add r9, r9, r4
+    ldr r10, [r0, r9, LSL #2] // r10 = M[j, i]
+    // M[i, j] = M[j, i]
+    str r10, [r0, r6, LSL #2]
+    str r8, [r0, r9, LSL #2]
+    b j_loop
+exit_t:
     pop {r4-r12, lr}
     bx lr
