@@ -1,11 +1,11 @@
 .macro print str_label size
-    push {r0-r2}
+    push {r0-r2, r7}
     mov r0, #1 // stdout file descriptor
     ldr r1, =\str_label
     mov r2, #\size
     mov r7, #4 // write syscall
     svc 0
-    pop {r0-r2}
+    pop {r0-r2, r7}
 .endm
 
 .macro exit error_code

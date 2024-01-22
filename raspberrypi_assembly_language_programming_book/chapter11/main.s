@@ -10,6 +10,19 @@ _start:
     print usage_str USAGE_STR_SIZE
     exit 1
 correct_argc:
+    ldmib sp, {r4-r8} // Load all argv elements
+    mov r0, r5 // r0 = argv[1]
+    bl strtof
+    mov r4, r0
+    mov r0, r6
+    bl strtof
+    mov r5, r0
+    mov r0, r7
+    bl strtof
+    mov r6, r0
+    mov r0, r8
+    bl strtof
+    mov r7, r0
     exit 0
 
 .data
